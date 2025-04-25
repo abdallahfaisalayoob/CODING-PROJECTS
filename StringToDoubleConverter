@@ -1,0 +1,60 @@
+// Assignment #: A04
+// Roll #: 23I-6058
+// Name: Abdallah Faisal Ayoob
+// Course Name: CS1002 – Programming Fundamentals
+// Semester: Fall 2023
+// Date of submission: 1-11-2023
+#include <iostream>
+using namespace std;
+int main() 
+{
+char num[100] = {0};
+double d = 0.0;
+cin >> num;
+//STUDENT CODE should only go below this:
+
+    int position = 0;
+    if (num[0] == '-') // Checking for a possible negative sign
+    {
+        position = 1;
+    }
+
+    int decimalPosition = -1; 
+    double decimalPlace = 0.1;
+
+    for (int i = position; num[i] != '\0'; i++) 
+    {
+        if (num[i] == '.' && decimalPosition == -1) 
+        {
+            decimalPosition = i;
+            continue; // Skip the decimal point
+        }
+
+        if (num[i] >= '0' && num[i] <= '9') 
+        {
+            if (decimalPosition == -1)
+            {
+                d = d * 10 + (num[i] - '0');
+            } else 
+            {
+                d = d + (num[i] - '0') * decimalPlace;
+                decimalPlace /= 10;
+            }
+        } else
+        {
+
+        }
+    }
+
+
+
+//STUDENT CODE should only go above this:
+cout << d;
+
+    
+    
+}
+
+
+
+
