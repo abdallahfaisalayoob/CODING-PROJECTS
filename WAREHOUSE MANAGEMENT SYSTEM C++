@@ -1,0 +1,380 @@
+// Project
+// Course Name: CS1002 – Programming Fundamentals
+// Semester: Fall 2023
+// Date of submission: 3-12-2023
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+const int AdminNo = 5;
+const int StorageNo = 20;                             // 20 Accounts
+const int StorageRow = 2;                             // ID, Password
+
+string CustomerAcc[StorageNo][StorageRow];
+int CustomerBal[StorageNo] = { 0 };
+unsigned long long CustomerReg[StorageNo] = { 0 };
+unsigned long long R1 = 123456789, R2 = 987654321;   // Method: (R1 * R2) / (AccID + 1) = RegID (Perceived Random for given sequence)
+string WarehouseAcc[AdminNo][StorageRow];
+string ShipmentStatus[StorageNo];
+int ShipmentOwner[StorageNo] = { StorageNo + 5 };
+
+
+const int n = 10;
+string items[n] = { "\0" };
+int price[n] = { 0 };
+int quantity[n] = { 0 };
+
+void Initialize();
+void Create_Account(int& AccID);
+void View_Inventory();
+void Edit_Item();
+void Response(int& r, int a, int b);
+void CustomerInterface(int ACCOUNT_ID);
+void OrderDetails(int ACID);
+void Place_Order(int AID);
+void WarehouseInterface();
+
+
+int main()
+{
+    Initialize();
+    int AccID = 0;
+    string enteredUsername;
+    string enteredPassword;
+
+    cout << setw(60) << "Warehouse Login Portal" << endl;
+    cout << setw(65) << "Welcome to the Warehouse Portal!" << endl;
+    cout << "Pick the corresponding options:" << endl;
+    cout << "1: Login System" << endl;
+    cout << "2: Exit" << endl;
+    int res1 = 0;
+    int res2 = 0;
+    bool Admin = false;
+
+
+
+    do
+    {
+        Response(res1, 1, 2);
+        switch (res1)
+        {
+        case 1:
+        {
+            cout << "1: Login" << endl << "2: Create Account" << endl;
+            do
+            {
+                Response(res2, 1, 2);
+
+                switch (res2)
+                {
+                case 1:
+                {
+                    do
+                    {
+                        cin.ignore();                  // Weird Compiler Shenanigans with Input
+                        cout << "Username: " << endl;
+                        getline(cin, enteredUsername);
+
+                        cout << "Password: " << endl;
+                        getline(cin, enteredPassword);
+
+                        if (enteredUsername == CustomerAcc[AccID][0] && enteredPassword == CustomerAcc[AccID][1])
+                        {
+                            CustomerInterface(AccID);
+                            break;
+                        }
+                        else if (enteredUsername == WarehouseAcc[AccID][0] && enteredPassword == WarehouseAcc[AccID][1])
+                        {
+                            WarehouseInterface();
+                            break;
+                        }
+                        else
+                        {
+                            cout << "Incorrect Login Details! Please Enter the Correct Details!" << endl;
+                        }
+
+                    } while (true);
+                    break;
+                }
+                case 2:
+                {
+                    Create_Account(AccID);
+                    break;
+                }
+
+                }
+            } while (res2 != 2);
+            break;
+        }
+
+        case 2:
+            cout << "Thank you for using our service portal!";
+            break;
+
+
+        }
+
+    } while (res1 != 2);
+
+    return 0;
+}
+
+void Response(int& r, int a, int b)
+{
+    while (true)
+    {
+        cout << "Option No: ";
+        r = 0;
+        cin >> r;
+        if (r >= a && r <= b)
+            break;
+        else
+            cout << "Wrong Input! Enter Correct Input." << endl;
+        break;
+    }
+}
+
+void Initialize()
+{
+    // Pre-Existing Accounts
+    WarehouseAcc[0][0] = "Warehouse", WarehouseAcc[0][1] = "Password";
+    WarehouseAcc[1][0] = "Employee 7", WarehouseAcc[1][1] = "RealestOne";
+
+    CustomerAcc[0][0] = "Jeff Buckley", CustomerAcc[0][1] = "Lover";
+    CustomerBal[0] = 999999, CustomerReg[0] = 121932631112635260;
+    CustomerAcc[1][0] = "Dhillon", CustomerAcc[1][1] = "With You";
+    CustomerBal[1] = 10000, CustomerReg[1] = 60966315556317630;
+    CustomerAcc[2][0] = "Pooki", CustomerAcc[2][1] = "BrokeBoy";
+    CustomerBal[2] = 20, CustomerReg[2] = 40644210370878424;
+    CustomerAcc[3][0] = "Maam Nimra", CustomerAcc[3][1] = "AttentionClass";
+    CustomerBal[3] = 20000, CustomerReg[3] = 30483157778158816;
+    CustomerAcc[4][0] = "Aamer Munir", CustomerAcc[4][1] = "Lateefa";
+    CustomerBal[4] = 50000, CustomerReg[4] = 24386526222527052;
+
+    items[0] = "Banana", price[0] = 20, quantity[0] = 700;
+    items[1] = "Apple", price[1] = 30, quantity[1] = 320;
+    items[2] = "Jet", price[2] = 10000, quantity[2] = 100;
+    items[3] = "Gun", price[3] = 5000, quantity[3] = 1000;
+    items[4] = "ICBM", price[4] = 100000, quantity[4] = 2;
+    items[5] = "T-34", price[5] = 60000, quantity[5] = 13;
+    items[6] = "KV1-Zis5", price[6] = 76000, quantity[6] = 40;
+    items[7] = "PS5", price[7] = 150000, quantity[7] = 20;
+    items[8] = "XBox X", price[8] = 130000, quantity[8] = 8;
+    items[9] = "Eyeliner", price[9] = 4000, quantity[9] = 50;
+
+}
+
+void Create_Account(int& AccID)
+{
+    for (AccID = 0; AccID < StorageNo; AccID++)
+    {
+        if (CustomerAcc[AccID][0] == "" && CustomerAcc[AccID][1] == "")
+            break;
+    }
+
+    cout << "Welcome to the account registration system." << endl;
+    cout << "Please Enter a Username and Password without any spaces to register your account" << endl;
+    cout << endl << "Please enter your Username: ";
+    cin.ignore();                                     // Weird Compiler Shenanigans with Input
+    getline(cin, CustomerAcc[AccID][0]);
+
+    cout << endl << "Please enter your Password: ";
+    getline(cin, CustomerAcc[AccID][1]);
+
+    CustomerReg[AccID] = R1 * R2 / (AccID + 1);
+
+    cout << endl << "Username: " << CustomerAcc[AccID][0] << endl << "Password: " << CustomerAcc[AccID][1] << endl;
+    cout << "Your Registration Number is: " << CustomerReg[AccID] << endl;
+}
+
+void View_Inventory()
+{
+    for (int i = 0; items[i] != "\0"; i++)
+    {
+        cout << i + 1 << ": Amount of " << items[i] << " is for " << price[i] << " Rupees, of quantity " << quantity[i] << endl;
+    }
+}
+
+
+void Edit_Item()
+{
+    int res = 0;
+    cout << "Make Changes to Invnetory: " << endl;
+    cout << "1: Edit Existing Item" << endl << "2: Add a New Item " << "3: Exit" << endl;
+    Response(res, 1, 3);
+    View_Inventory();
+
+    switch (res)
+    {
+    case 1:
+    {
+        int choice = 0;
+        cout << "What would you like to change about this item: " << endl;
+        cout << "1: Name" << endl << "2: Price" << endl << "3: Quantity: " << "4: Delete Item" << "5: Exit" << endl;
+        Response(choice, 1, 5);
+        switch (choice)
+        {
+        case 1:
+        {
+            cout << "Enter the new name: " << endl;
+            cin >> items[res - 1];
+            cout << endl << "New Item name is: " << items[res - 1];
+            break;
+        }
+        case 2:
+        {
+            cout << "Enter the new price: " << endl;
+            cin >> price[res - 1];
+            cout << endl << "New Item price is: " << price[res - 1];
+            break;
+        }
+        case 3:
+        {
+            cout << "Enter the new quantity: " << endl;
+            cin >> quantity[res - 1];
+            cout << endl << "New Item quantity is: " << quantity[res - 1];
+            break;
+        }
+
+        case 4:
+        {
+            items[res - 1] = "\0", price[res - 1] = 0, quantity[res - 1] = 0;
+        }
+        case 5:
+            break;
+        }
+    }
+
+
+    case 2:
+    {
+        int i = 0;
+        for (i = 0; i < StorageNo; i++)
+        {
+            if (items[i] == "\0")
+                break;
+        }
+        cout << "Enter item name: " << endl;
+        cin.ignore();
+        getline(cin, items[i]);
+        cout << "Enter item price: " << endl;
+        cin >> price[i];
+        cout << "Enter item Stock: " << endl;
+        cin >> quantity[i];
+
+
+    }
+    case 3:
+        break;
+    default:
+        break;
+    }
+}
+
+void Place_Order(int AID)
+{
+    View_Inventory();
+    int it, am;             //item and amount
+    cout << "Please Enter the item you would like to purchase: " << endl;
+    cin >> it;
+    cout << "Enter how many would you like to purchase: " << endl;
+    cin >> am;
+    CustomerBal[AID] = CustomerBal[AID] - (price[it - 1] * quantity[it - 1]);
+    quantity[it - 1] = quantity[it - 1] - am;
+
+    cout << "Your total is: " << "\t" << endl;
+    cout << "Item cost: " << "\t" << price[it - 1] * quantity[it - 1] << endl;
+    cout << "Cost after Sales Tax (17%): " << "\t" << (price[it - 1] * quantity[it - 1]) * 1.17 << endl;
+
+    for (int i = 0; i < StorageNo; i++)
+    {
+        if (ShipmentOwner[i] == 0)
+        {
+            ShipmentOwner[i] = AID;
+            ShipmentStatus[i] = "Order Placed";
+        }
+
+    }
+
+}
+
+void OrderDetails(int ACID)
+{
+    for (int i = 0; i < StorageNo; i++)
+    {
+        if (ShipmentOwner[i] == ShipmentOwner[ACID] && ShipmentStatus[i] != "\0")
+        {
+            cout << "Status of Shipment No " << i + 1 << " is: " << ShipmentStatus[i] << endl;
+        }
+        else
+        {
+            cout << "No Order Status Present!" << endl;
+        }
+
+    }
+}
+
+void CustomerInterface(int ACCOUNT_ID)
+{
+    int res;
+    cout << "Welcome Respected Customer! ";
+    do
+    {
+        cout << endl << "1: View Inventory" << endl << "2: Place an Order" << endl << "3: Ordered Item Details" << endl << "4: Exit" << endl;
+        Response(res, 1, 4);
+        switch (res)
+        {
+        case 1:
+        {
+            View_Inventory();
+            break;
+        }
+        case 2:
+        {
+            Place_Order(ACCOUNT_ID);
+            break;
+        }
+        case 3:
+        {
+            OrderDetails(ACCOUNT_ID);
+            break;
+        }
+        case 4:
+            break;
+        }
+    } while (res != 4);
+
+}
+
+void WarehouseInterface()
+{
+    int res;
+    cout << "Welcome Valued Employee! ";
+    do
+    {
+        cout << endl << "1: View Inventory" << endl << "2: Manage Inventory" << endl << "3: Ordered Item Details" << endl << "4: Exit" << endl;
+        Response(res, 1, 4);
+        switch (res)
+        {
+        case 1:
+        {
+            View_Inventory();
+            break;
+        }
+        case 2:
+        {
+            Edit_Item();
+            break;
+        }
+        case 3:
+        {
+
+            break;
+        }
+        case 4:
+            break;
+        }
+    } while (res != 4);
+}
