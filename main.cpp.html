@@ -1,0 +1,381 @@
+<html>
+<head>
+<title>main.cpp</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #b3ae60;}
+.s1 { color: #bcbec4;}
+.s2 { color: #6aab73;}
+.s3 { color: #cf8e6d;}
+.s4 { color: #bcbec4;}
+.s5 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.cpp</font>
+</center></td></tr></table>
+<pre><span class="s0">#include </span><span class="s2">&lt;iostream&gt;</span>
+<span class="s0">#include </span><span class="s2">&lt;fstream&gt;</span>
+<span class="s0">#include </span><span class="s2">&lt;string&gt;</span>
+<span class="s0">#include </span><span class="s2">&lt;iomanip&gt;</span>
+<span class="s3">using namespace </span><span class="s1">std</span><span class="s4">;</span>
+
+<span class="s3">const int </span><span class="s1">max_clients </span><span class="s4">= </span><span class="s5">150</span><span class="s4">;</span>
+<span class="s3">int </span><span class="s1">numclients </span><span class="s4">= </span><span class="s5">0</span><span class="s4">;</span>
+<span class="s3">int </span><span class="s1">search_position </span><span class="s4">= </span><span class="s5">0</span><span class="s4">;</span>
+
+<span class="s3">class </span><span class="s1">Customer </span><span class="s4">{</span>
+<span class="s3">private</span><span class="s4">:</span>
+    <span class="s1">string FirstName</span><span class="s4">;</span>
+    <span class="s1">string LastName</span><span class="s4">;</span>
+    <span class="s1">string CNIC</span><span class="s4">;</span>
+<span class="s3">public</span><span class="s4">:</span>
+    <span class="s3">void </span><span class="s1">input_values</span><span class="s4">(</span><span class="s1">string fname</span><span class="s4">, </span><span class="s1">string lname</span><span class="s4">, </span><span class="s1">string cn</span><span class="s4">);</span>
+    <span class="s1">string returnfname</span><span class="s4">();</span>
+    <span class="s1">string getCNIC</span><span class="s4">();</span>
+    <span class="s1">string returnlname</span><span class="s4">();</span>
+<span class="s4">};</span>
+
+<span class="s3">class </span><span class="s1">Account </span><span class="s4">{</span>
+<span class="s3">private</span><span class="s4">:</span>
+    <span class="s1">string AccID</span><span class="s4">;</span>
+    <span class="s1">string Saving_Current</span><span class="s4">;</span>
+    <span class="s3">int </span><span class="s1">balance</span><span class="s4">;</span>
+    <span class="s1">string creation_date</span><span class="s4">;</span>
+    <span class="s1">string CNIC</span><span class="s4">;</span>
+<span class="s3">public</span><span class="s4">:</span>
+    <span class="s3">void </span><span class="s1">setupA</span><span class="s4">(</span><span class="s1">string id</span><span class="s4">, </span><span class="s1">string s_c</span><span class="s4">, </span><span class="s1">string cd</span><span class="s4">, </span><span class="s3">int </span><span class="s1">bal</span><span class="s4">, </span><span class="s1">string cnic</span><span class="s4">);</span>
+    <span class="s3">int </span><span class="s1">search</span><span class="s4">(</span><span class="s1">string id_input</span><span class="s4">);</span>
+    <span class="s3">int </span><span class="s1">getBalance</span><span class="s4">();</span>
+    <span class="s3">void </span><span class="s1">updateBalance</span><span class="s4">(</span><span class="s3">int </span><span class="s1">amount</span><span class="s4">);</span>
+    <span class="s1">string getAccID</span><span class="s4">();</span>
+    <span class="s1">string getSavingCurrent</span><span class="s4">();</span>
+    <span class="s1">string getcreation_date</span><span class="s4">();</span>
+    <span class="s1">string getCNIC</span><span class="s4">();</span>
+<span class="s4">};</span>
+
+<span class="s3">class </span><span class="s1">Transaction </span><span class="s4">{</span>
+<span class="s3">private</span><span class="s4">:</span>
+    <span class="s1">string TrID</span><span class="s4">;</span>
+    <span class="s1">string debit_credit</span><span class="s4">;</span>
+    <span class="s3">int </span><span class="s1">amount</span><span class="s4">;</span>
+    <span class="s1">string date_time</span><span class="s4">;</span>
+    <span class="s1">string AccID</span><span class="s4">;</span>
+<span class="s3">public</span><span class="s4">:</span>
+    <span class="s3">void </span><span class="s1">createTransaction</span><span class="s4">(</span><span class="s1">string trID</span><span class="s4">, </span><span class="s1">string debitCredit</span><span class="s4">, </span><span class="s3">int </span><span class="s1">amt</span><span class="s4">, </span><span class="s1">string dateTime</span><span class="s4">, </span><span class="s1">string accID</span><span class="s4">);</span>
+    <span class="s3">void </span><span class="s1">saveTransactionToFile</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">, </span><span class="s1">Account account</span><span class="s4">, </span><span class="s1">Transaction transaction</span><span class="s4">);</span>
+<span class="s4">};</span>
+
+<span class="s3">void </span><span class="s1">loadDataFromFile</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">[], </span><span class="s1">Account account</span><span class="s4">[]);</span>
+<span class="s3">void </span><span class="s1">displayAccountSearch</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">[], </span><span class="s1">Account account</span><span class="s4">[]);</span>
+<span class="s3">void </span><span class="s1">transaction_amount</span><span class="s4">(</span><span class="s1">Account </span><span class="s4">&amp;</span><span class="s1">account</span><span class="s4">, </span><span class="s3">int </span><span class="s1">withdraw</span><span class="s4">);</span>
+<span class="s3">void </span><span class="s1">addCustomer</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">[], </span><span class="s1">Account account</span><span class="s4">[]);</span>
+<span class="s3">void </span><span class="s1">saveDataToFile</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">[], </span><span class="s1">Account account</span><span class="s4">[]);</span>
+
+
+<span class="s1">Customer customer</span><span class="s4">[</span><span class="s1">max_clients</span><span class="s4">];</span>
+<span class="s1">Account account</span><span class="s4">[</span><span class="s1">max_clients</span><span class="s4">];</span>
+<span class="s1">Transaction transaction</span><span class="s4">;</span>
+
+<span class="s3">int </span><span class="s1">main</span><span class="s4">()</span>
+<span class="s4">{</span>
+    <span class="s1">loadDataFromFile</span><span class="s4">(</span><span class="s1">customer</span><span class="s4">, </span><span class="s1">account</span><span class="s4">);</span>
+
+    <span class="s3">int </span><span class="s1">option</span><span class="s4">;</span>
+    <span class="s1">string id_input</span><span class="s4">;</span>
+    <span class="s3">int </span><span class="s1">search_result</span><span class="s4">;</span>
+
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;WELCOME TO FAST BANK &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;--------------------------------&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+
+    <span class="s3">while </span><span class="s4">(</span><span class="s3">true</span><span class="s4">) {</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Dear user how can we assist you today&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Press [1] for Transaction/Display account info&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Press [2] for Add a customer&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Press [3] for Search an account&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Press [4] exit &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Your choice: &quot;</span><span class="s4">; </span><span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">option</span><span class="s4">;</span>
+
+
+        <span class="s3">switch </span><span class="s4">(</span><span class="s1">option</span><span class="s4">) {</span>
+            <span class="s3">case </span><span class="s5">1</span><span class="s4">:</span>
+            <span class="s4">{</span>
+                <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Dear user, enter your account number: &quot;</span><span class="s4">;</span>
+                <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">id_input</span><span class="s4">;</span>
+                <span class="s3">int </span><span class="s1">result </span><span class="s4">= </span><span class="s1">account</span><span class="s4">[</span><span class="s5">0</span><span class="s4">].</span><span class="s1">search</span><span class="s4">(</span><span class="s1">id_input</span><span class="s4">);</span>
+
+                <span class="s3">if </span><span class="s4">(</span><span class="s1">result </span><span class="s4">!= -</span><span class="s5">1</span><span class="s4">)</span>
+                <span class="s4">{</span>
+                    <span class="s1">displayAccountSearch</span><span class="s4">(</span><span class="s1">customer</span><span class="s4">, </span><span class="s1">account</span><span class="s4">);</span>
+
+                    <span class="s3">int </span><span class="s1">withdraw </span><span class="s4">= </span><span class="s5">0</span><span class="s4">;</span>
+
+                    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Dear user, enter the amount of transaction: &quot;</span><span class="s4">;</span>
+                    <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">withdraw</span><span class="s4">;</span>
+
+                    <span class="s1">transaction_amount</span><span class="s4">(</span><span class="s1">account</span><span class="s4">[</span><span class="s1">result</span><span class="s4">], </span><span class="s1">withdraw</span><span class="s4">);</span>
+                    <span class="s1">transaction</span><span class="s4">.</span><span class="s1">saveTransactionToFile</span><span class="s4">(</span><span class="s1">customer</span><span class="s4">[</span><span class="s1">search_position</span><span class="s4">], </span><span class="s1">account</span><span class="s4">[</span><span class="s1">result</span><span class="s4">], </span><span class="s1">transaction</span><span class="s4">);</span>
+
+                <span class="s4">}</span>
+                <span class="s3">else</span>
+                <span class="s4">{</span>
+                    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Account not found.&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+                <span class="s4">}</span>
+                <span class="s3">break</span><span class="s4">;</span>
+            <span class="s4">}</span>
+            <span class="s3">case </span><span class="s5">2</span><span class="s4">:</span>
+                <span class="s1">addCustomer</span><span class="s4">(</span><span class="s1">customer</span><span class="s4">, </span><span class="s1">account</span><span class="s4">);</span>
+                <span class="s1">saveDataToFile</span><span class="s4">(</span><span class="s1">customer</span><span class="s4">, </span><span class="s1">account</span><span class="s4">);</span>
+
+                <span class="s3">break</span><span class="s4">;</span>
+            <span class="s3">case </span><span class="s5">3</span><span class="s4">:</span>
+                <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Dear user, enter the account number to search: &quot;</span><span class="s4">;</span>
+                <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">id_input</span><span class="s4">;</span>
+
+                <span class="s1">search_result </span><span class="s4">= </span><span class="s1">account</span><span class="s4">[</span><span class="s5">0</span><span class="s4">].</span><span class="s1">search</span><span class="s4">(</span><span class="s1">id_input</span><span class="s4">);</span>
+
+                <span class="s3">if </span><span class="s4">(</span><span class="s1">search_result </span><span class="s4">!= -</span><span class="s5">1</span><span class="s4">)</span>
+                <span class="s4">{</span>
+                    <span class="s1">displayAccountSearch</span><span class="s4">(</span><span class="s1">customer</span><span class="s4">, </span><span class="s1">account</span><span class="s4">);</span>
+                <span class="s4">}</span>
+                <span class="s3">else</span>
+                <span class="s4">{</span>
+                    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Account not found.&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+                <span class="s4">}</span>
+                <span class="s3">break</span><span class="s4">;</span>
+            <span class="s3">case </span><span class="s5">4</span><span class="s4">:</span>
+                <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Exiting program. Goodbye!&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+                <span class="s3">return </span><span class="s5">0</span><span class="s4">;</span>
+            <span class="s3">default</span><span class="s4">:</span>
+                <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Invalid option. Please choose again.&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+                <span class="s3">break</span><span class="s4">;</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+
+    <span class="s3">return </span><span class="s5">0</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+
+
+<span class="s3">void </span><span class="s1">Customer</span><span class="s4">::</span><span class="s1">input_values</span><span class="s4">(</span><span class="s1">string fname</span><span class="s4">, </span><span class="s1">string lname</span><span class="s4">, </span><span class="s1">string cn</span><span class="s4">)</span>
+<span class="s4">{</span>
+    <span class="s1">FirstName </span><span class="s4">= </span><span class="s1">fname</span><span class="s4">;</span>
+    <span class="s1">LastName </span><span class="s4">= </span><span class="s1">lname</span><span class="s4">;</span>
+    <span class="s1">CNIC </span><span class="s4">= </span><span class="s1">cn</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s1">string Customer</span><span class="s4">::</span><span class="s1">returnfname</span><span class="s4">()</span>
+<span class="s4">{</span>
+    <span class="s3">return </span><span class="s1">FirstName</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s1">string Customer</span><span class="s4">::</span><span class="s1">returnlname</span><span class="s4">()</span>
+<span class="s4">{</span>
+    <span class="s3">return </span><span class="s1">LastName</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s1">string Customer</span><span class="s4">::</span><span class="s1">getCNIC</span><span class="s4">()</span>
+<span class="s4">{</span>
+    <span class="s3">return </span><span class="s1">CNIC</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s3">void </span><span class="s1">Account</span><span class="s4">::</span><span class="s1">setupA</span><span class="s4">(</span><span class="s1">string id</span><span class="s4">, </span><span class="s1">string s_c</span><span class="s4">, </span><span class="s1">string cd</span><span class="s4">, </span><span class="s3">int </span><span class="s1">bal</span><span class="s4">, </span><span class="s1">string cnic</span><span class="s4">)</span>
+<span class="s4">{</span>
+    <span class="s1">AccID </span><span class="s4">= </span><span class="s1">id</span><span class="s4">;</span>
+    <span class="s1">Saving_Current </span><span class="s4">= </span><span class="s1">s_c</span><span class="s4">;</span>
+    <span class="s1">creation_date </span><span class="s4">= </span><span class="s1">cd</span><span class="s4">;</span>
+    <span class="s1">balance </span><span class="s4">= </span><span class="s1">bal</span><span class="s4">;</span>
+    <span class="s1">CNIC </span><span class="s4">= </span><span class="s1">cnic</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s3">int </span><span class="s1">Account</span><span class="s4">::</span><span class="s1">search</span><span class="s4">(</span><span class="s1">string id_input</span><span class="s4">)</span>
+<span class="s4">{</span>
+    <span class="s3">for </span><span class="s4">(</span><span class="s3">int </span><span class="s1">i </span><span class="s4">= </span><span class="s5">0</span><span class="s4">; </span><span class="s1">i </span><span class="s4">&lt; </span><span class="s1">numclients</span><span class="s4">; </span><span class="s1">i</span><span class="s4">++)</span>
+    <span class="s4">{</span>
+        <span class="s3">if </span><span class="s4">(</span><span class="s1">id_input </span><span class="s4">== </span><span class="s1">account</span><span class="s4">[</span><span class="s1">i</span><span class="s4">].</span><span class="s1">getAccID</span><span class="s4">())</span>
+        <span class="s4">{</span>
+            <span class="s1">search_position </span><span class="s4">= </span><span class="s1">i</span><span class="s4">;</span>
+            <span class="s3">return </span><span class="s1">search_position</span><span class="s4">;</span>
+        <span class="s4">}</span>
+    <span class="s4">}</span>
+    <span class="s1">search_position </span><span class="s4">= -</span><span class="s5">1</span><span class="s4">;</span>
+    <span class="s3">return </span><span class="s1">search_position</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s3">int </span><span class="s1">Account</span><span class="s4">::</span><span class="s1">getBalance</span><span class="s4">()</span>
+<span class="s4">{</span>
+    <span class="s3">return </span><span class="s1">balance</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s3">void </span><span class="s1">Account</span><span class="s4">::</span><span class="s1">updateBalance</span><span class="s4">(</span><span class="s3">int </span><span class="s1">amount</span><span class="s4">)</span>
+<span class="s4">{</span>
+    <span class="s1">balance </span><span class="s4">-= </span><span class="s1">amount</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s1">string Account</span><span class="s4">::</span><span class="s1">getAccID</span><span class="s4">()</span>
+<span class="s4">{</span>
+    <span class="s3">return </span><span class="s1">AccID</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s1">string Account</span><span class="s4">::</span><span class="s1">getSavingCurrent</span><span class="s4">()</span>
+<span class="s4">{</span>
+    <span class="s3">return </span><span class="s1">Saving_Current</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s1">string Account</span><span class="s4">::</span><span class="s1">getcreation_date</span><span class="s4">()</span>
+<span class="s4">{</span>
+    <span class="s3">return </span><span class="s1">creation_date</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s1">string Account</span><span class="s4">::</span><span class="s1">getCNIC</span><span class="s4">()</span>
+<span class="s4">{</span>
+    <span class="s3">return </span><span class="s1">CNIC</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s3">void </span><span class="s1">loadDataFromFile</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">[], </span><span class="s1">Account account</span><span class="s4">[])</span>
+<span class="s4">{</span>
+    <span class="s1">ifstream read</span><span class="s4">(</span><span class="s2">&quot;lol.txt&quot;</span><span class="s4">);</span>
+
+    <span class="s3">if </span><span class="s4">(!</span><span class="s1">read</span><span class="s4">.</span><span class="s1">is_open</span><span class="s4">())</span>
+    <span class="s4">{</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Error: File could not be opened.&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+        <span class="s3">return</span><span class="s4">;</span>
+    <span class="s4">}</span>
+
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">10</span><span class="s4">) &lt;&lt; </span><span class="s2">&quot;First Name&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s2">&quot;Last Name&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s2">&quot;CNIC&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s2">&quot;ACCID&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s2">&quot;Saving/current&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s2">&quot;Balance&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s2">&quot;Creation date&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;---------------------------------------------------------------------------------------------------------------------------------------------------&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+
+    <span class="s1">string fname</span><span class="s4">, </span><span class="s1">lname</span><span class="s4">, </span><span class="s1">cn</span><span class="s4">, </span><span class="s1">id</span><span class="s4">, </span><span class="s1">s_c</span><span class="s4">, </span><span class="s1">cd</span><span class="s4">;</span>
+    <span class="s3">int </span><span class="s1">bal</span><span class="s4">;</span>
+
+    <span class="s3">int </span><span class="s1">i </span><span class="s4">= </span><span class="s5">0</span><span class="s4">;</span>
+    <span class="s1">string format</span><span class="s4">;</span>
+    <span class="s1">getline</span><span class="s4">(</span><span class="s1">read</span><span class="s4">, </span><span class="s1">format</span><span class="s4">);</span>
+
+    <span class="s3">while </span><span class="s4">(</span><span class="s1">i </span><span class="s4">&lt; </span><span class="s1">max_clients </span><span class="s4">&amp;&amp; </span><span class="s1">read </span><span class="s4">&gt;&gt; </span><span class="s1">fname </span><span class="s4">&gt;&gt; </span><span class="s1">lname </span><span class="s4">&gt;&gt; </span><span class="s1">cn </span><span class="s4">&gt;&gt; </span><span class="s1">id </span><span class="s4">&gt;&gt; </span><span class="s1">s_c </span><span class="s4">&gt;&gt; </span><span class="s1">bal </span><span class="s4">&gt;&gt; </span><span class="s1">cd</span><span class="s4">)</span>
+    <span class="s4">{</span>
+        <span class="s1">customer</span><span class="s4">[</span><span class="s1">i</span><span class="s4">].</span><span class="s1">input_values</span><span class="s4">(</span><span class="s1">fname</span><span class="s4">, </span><span class="s1">lname</span><span class="s4">, </span><span class="s1">cn</span><span class="s4">);</span>
+        <span class="s1">account</span><span class="s4">[</span><span class="s1">i</span><span class="s4">].</span><span class="s1">setupA</span><span class="s4">(</span><span class="s1">id</span><span class="s4">, </span><span class="s1">s_c</span><span class="s4">, </span><span class="s1">cd</span><span class="s4">, </span><span class="s1">bal</span><span class="s4">, </span><span class="s1">cn</span><span class="s4">);</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">10</span><span class="s4">) &lt;&lt; </span><span class="s1">fname </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s1">lname </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s1">cn </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s1">id </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s1">s_c </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s1">bal </span><span class="s4">&lt;&lt; </span><span class="s1">setw</span><span class="s4">(</span><span class="s5">20</span><span class="s4">) &lt;&lt; </span><span class="s1">cd </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+        <span class="s1">i</span><span class="s4">++;</span>
+    <span class="s4">}</span>
+
+    <span class="s1">numclients </span><span class="s4">= </span><span class="s1">i</span><span class="s4">;</span>
+
+    <span class="s3">if </span><span class="s4">(</span><span class="s1">i </span><span class="s4">== </span><span class="s5">0</span><span class="s4">)</span>
+    <span class="s4">{</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Error: No data found in the file.&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s4">}</span>
+
+    <span class="s1">read</span><span class="s4">.</span><span class="s1">close</span><span class="s4">();</span>
+<span class="s4">}</span>
+
+<span class="s3">void </span><span class="s1">displayAccountSearch</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">[], </span><span class="s1">Account account</span><span class="s4">[])</span>
+<span class="s4">{</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Name: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">customer</span><span class="s4">[</span><span class="s1">search_position</span><span class="s4">].</span><span class="s1">returnfname</span><span class="s4">() &lt;&lt; </span><span class="s2">&quot; &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">customer</span><span class="s4">[</span><span class="s1">search_position</span><span class="s4">].</span><span class="s1">returnlname</span><span class="s4">() &lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Account ID: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">[</span><span class="s1">search_position</span><span class="s4">].</span><span class="s1">getAccID</span><span class="s4">() &lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Account Type: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">[</span><span class="s1">search_position</span><span class="s4">].</span><span class="s1">getSavingCurrent</span><span class="s4">() &lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Creation Date: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">[</span><span class="s1">search_position</span><span class="s4">].</span><span class="s1">getcreation_date</span><span class="s4">() &lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Balance: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">[</span><span class="s1">search_position</span><span class="s4">].</span><span class="s1">getBalance</span><span class="s4">() &lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s3">void </span><span class="s1">transaction_amount</span><span class="s4">(</span><span class="s1">Account </span><span class="s4">&amp;</span><span class="s1">account</span><span class="s4">, </span><span class="s3">int </span><span class="s1">withdraw</span><span class="s4">)</span>
+<span class="s4">{</span>
+    <span class="s3">if </span><span class="s4">(</span><span class="s1">account</span><span class="s4">.</span><span class="s1">getBalance</span><span class="s4">() &gt;= </span><span class="s1">withdraw</span><span class="s4">)</span>
+    <span class="s4">{</span>
+        <span class="s1">account</span><span class="s4">.</span><span class="s1">updateBalance</span><span class="s4">(</span><span class="s1">withdraw</span><span class="s4">);</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Your remaining balance after withdrawing &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">withdraw </span><span class="s4">&lt;&lt; </span><span class="s2">&quot; is &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">.</span><span class="s1">getBalance</span><span class="s4">() &lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+
+        <span class="s1">Transaction transaction</span><span class="s4">;</span>
+        <span class="s1">transaction</span><span class="s4">.</span><span class="s1">createTransaction</span><span class="s4">(</span><span class="s2">&quot;123456&quot;</span><span class="s4">, </span><span class="s2">&quot;Debit&quot;</span><span class="s4">, </span><span class="s1">withdraw</span><span class="s4">, </span><span class="s2">&quot;18/03/2024&quot;</span><span class="s4">, </span><span class="s1">account</span><span class="s4">.</span><span class="s1">getAccID</span><span class="s4">());</span>
+
+        <span class="s1">transaction</span><span class="s4">.</span><span class="s1">saveTransactionToFile</span><span class="s4">(</span><span class="s1">customer</span><span class="s4">[</span><span class="s1">search_position</span><span class="s4">], </span><span class="s1">account</span><span class="s4">, </span><span class="s1">transaction</span><span class="s4">);</span>
+    <span class="s4">} </span><span class="s3">else</span>
+    <span class="s4">{</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Insufficient balance.&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s4">}</span>
+<span class="s4">}</span>
+
+
+<span class="s3">void </span><span class="s1">addCustomer</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">[], </span><span class="s1">Account account</span><span class="s4">[])</span>
+<span class="s4">{</span>
+    <span class="s1">string fname</span><span class="s4">, </span><span class="s1">lname</span><span class="s4">, </span><span class="s1">cn</span><span class="s4">, </span><span class="s1">id</span><span class="s4">, </span><span class="s1">s_c</span><span class="s4">, </span><span class="s1">cd</span><span class="s4">;</span>
+    <span class="s3">int </span><span class="s1">bal</span><span class="s4">;</span>
+
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Enter first name: &quot;</span><span class="s4">;</span>
+    <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">fname</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Enter last name: &quot;</span><span class="s4">;</span>
+    <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">lname</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Enter CNIC: &quot;</span><span class="s4">;</span>
+    <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">cn</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Enter Account ID: &quot;</span><span class="s4">;</span>
+    <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">id</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Enter saving/current: &quot;</span><span class="s4">;</span>
+    <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">s_c</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Enter balance: &quot;</span><span class="s4">;</span>
+    <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">bal</span><span class="s4">;</span>
+    <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Enter creation date: &quot;</span><span class="s4">;</span>
+    <span class="s1">cin </span><span class="s4">&gt;&gt; </span><span class="s1">cd</span><span class="s4">;</span>
+
+    <span class="s1">customer</span><span class="s4">[</span><span class="s1">numclients</span><span class="s4">].</span><span class="s1">input_values</span><span class="s4">(</span><span class="s1">fname</span><span class="s4">, </span><span class="s1">lname</span><span class="s4">, </span><span class="s1">cn</span><span class="s4">);</span>
+    <span class="s1">account</span><span class="s4">[</span><span class="s1">numclients</span><span class="s4">].</span><span class="s1">setupA</span><span class="s4">(</span><span class="s1">id</span><span class="s4">, </span><span class="s1">s_c</span><span class="s4">, </span><span class="s1">cd</span><span class="s4">, </span><span class="s1">bal</span><span class="s4">, </span><span class="s1">cn</span><span class="s4">);</span>
+
+    <span class="s1">numclients</span><span class="s4">++;</span>
+<span class="s4">}</span>
+
+<span class="s3">void </span><span class="s1">saveDataToFile</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">[], </span><span class="s1">Account account</span><span class="s4">[])</span>
+<span class="s4">{</span>
+    <span class="s1">ofstream write</span><span class="s4">(</span><span class="s2">&quot;lol.txt&quot;</span><span class="s4">, </span><span class="s1">ios</span><span class="s4">::</span><span class="s1">app</span><span class="s4">);</span>
+
+    <span class="s3">if </span><span class="s4">(!</span><span class="s1">write</span><span class="s4">.</span><span class="s1">is_open</span><span class="s4">()) {</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Error: File could not be opened.&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+        <span class="s3">return</span><span class="s4">;</span>
+    <span class="s4">}</span>
+
+    <span class="s1">ifstream read</span><span class="s4">(</span><span class="s2">&quot;bank.txt&quot;</span><span class="s4">);</span>
+    <span class="s1">string line</span><span class="s4">;</span>
+
+    <span class="s1">read</span><span class="s4">.</span><span class="s1">close</span><span class="s4">();</span>
+
+    <span class="s1">write </span><span class="s4">&lt;&lt; </span><span class="s1">endl </span><span class="s4">&lt;&lt; </span><span class="s1">customer</span><span class="s4">[</span><span class="s1">numclients </span><span class="s4">- </span><span class="s5">1</span><span class="s4">].</span><span class="s1">returnfname</span><span class="s4">() &lt;&lt;</span><span class="s2">&quot;</span><span class="s3">\t</span><span class="s2">&quot;</span><span class="s4">&lt;&lt;</span><span class="s1">customer</span><span class="s4">[</span><span class="s1">numclients </span><span class="s4">-</span><span class="s5">1</span><span class="s4">].</span><span class="s1">returnlname</span><span class="s4">()&lt;&lt; </span><span class="s2">&quot;</span><span class="s3">\t</span><span class="s2">&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">customer</span><span class="s4">[</span><span class="s1">numclients </span><span class="s4">- </span><span class="s5">1</span><span class="s4">].</span><span class="s1">getCNIC</span><span class="s4">() &lt;&lt; </span><span class="s2">&quot;</span><span class="s3">\t</span><span class="s2">&quot;</span>
+          <span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">[</span><span class="s1">numclients </span><span class="s4">- </span><span class="s5">1</span><span class="s4">].</span><span class="s1">getAccID</span><span class="s4">() &lt;&lt; </span><span class="s2">&quot;</span><span class="s3">\t</span><span class="s2">&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">[</span><span class="s1">numclients </span><span class="s4">- </span><span class="s5">1</span><span class="s4">].</span><span class="s1">getSavingCurrent</span><span class="s4">()</span>
+          <span class="s4">&lt;&lt; </span><span class="s2">&quot;</span><span class="s3">\t</span><span class="s2">&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">[</span><span class="s1">numclients </span><span class="s4">- </span><span class="s5">1</span><span class="s4">].</span><span class="s1">getBalance</span><span class="s4">() &lt;&lt; </span><span class="s2">&quot;</span><span class="s3">\t</span><span class="s2">&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">[</span><span class="s1">numclients </span><span class="s4">- </span><span class="s5">1</span><span class="s4">].</span><span class="s1">getcreation_date</span><span class="s4">();</span>
+
+    <span class="s1">write</span><span class="s4">.</span><span class="s1">close</span><span class="s4">();</span>
+<span class="s4">}</span>
+
+<span class="s3">void </span><span class="s1">Transaction</span><span class="s4">::</span><span class="s1">createTransaction</span><span class="s4">(</span><span class="s1">string trID</span><span class="s4">, </span><span class="s1">string debitCredit</span><span class="s4">, </span><span class="s3">int </span><span class="s1">amt</span><span class="s4">, </span><span class="s1">string dateTime</span><span class="s4">, </span><span class="s1">string accID</span><span class="s4">)</span>
+<span class="s4">{</span>
+    <span class="s1">TrID </span><span class="s4">= </span><span class="s1">trID</span><span class="s4">;</span>
+    <span class="s1">debit_credit </span><span class="s4">= </span><span class="s1">debitCredit</span><span class="s4">;</span>
+    <span class="s1">amount </span><span class="s4">= </span><span class="s1">amt</span><span class="s4">;</span>
+    <span class="s1">date_time </span><span class="s4">= </span><span class="s1">dateTime</span><span class="s4">;</span>
+    <span class="s1">AccID </span><span class="s4">= </span><span class="s1">accID</span><span class="s4">;</span>
+<span class="s4">}</span>
+
+<span class="s3">void </span><span class="s1">Transaction</span><span class="s4">::</span><span class="s1">saveTransactionToFile</span><span class="s4">(</span><span class="s1">Customer customer</span><span class="s4">, </span><span class="s1">Account account</span><span class="s4">, </span><span class="s1">Transaction transaction</span><span class="s4">)</span>
+<span class="s4">{</span>
+    <span class="s1">ofstream write</span><span class="s4">(</span><span class="s2">&quot;transaction.txt&quot;</span><span class="s4">, </span><span class="s1">ios</span><span class="s4">::</span><span class="s1">app</span><span class="s4">);</span>
+
+    <span class="s3">if </span><span class="s4">(!</span><span class="s1">write</span><span class="s4">.</span><span class="s1">is_open</span><span class="s4">())</span>
+    <span class="s4">{</span>
+        <span class="s1">cout </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Error: File could not be opened.&quot; </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+        <span class="s3">return</span><span class="s4">;</span>
+    <span class="s4">}</span>
+
+    <span class="s1">write </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Transaction ID: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">transaction</span><span class="s4">.</span><span class="s1">TrID </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">write </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Customer Name: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">customer</span><span class="s4">.</span><span class="s1">returnfname</span><span class="s4">() &lt;&lt; </span><span class="s2">&quot; &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">customer</span><span class="s4">.</span><span class="s1">returnlname</span><span class="s4">() &lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">write </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Customer CNIC: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">customer</span><span class="s4">.</span><span class="s1">getCNIC</span><span class="s4">() &lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">write </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Account ID: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">account</span><span class="s4">.</span><span class="s1">getAccID</span><span class="s4">() &lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">write </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Transaction Type: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">transaction</span><span class="s4">.</span><span class="s1">debit_credit </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">write </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Transaction Amount: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">transaction</span><span class="s4">.</span><span class="s1">amount </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+    <span class="s1">write </span><span class="s4">&lt;&lt; </span><span class="s2">&quot;Date Time: &quot; </span><span class="s4">&lt;&lt; </span><span class="s1">transaction</span><span class="s4">.</span><span class="s1">date_time </span><span class="s4">&lt;&lt; </span><span class="s1">endl</span><span class="s4">;</span>
+
+    <span class="s1">write</span><span class="s4">.</span><span class="s1">close</span><span class="s4">();</span>
+<span class="s4">}</span>
+</pre>
+</body>
+</html>

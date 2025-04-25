@@ -1,0 +1,33 @@
+SEARCHING ALGORITHMS:
+1. Linear Search
+   - Time: O(n)
+   - Best case: O(1) when element is at first position
+   - Use when: array is unsorted, small size
+
+2. Binary Search
+   - Time: O(log n)
+   - Requires: Sorted array
+   - Use when: array is sorted
+
+SORTING ALGORITHMS:
+1. Bubble Sort
+   - Time: O(n²)
+   - Best case: O(n) when already sorted
+   - Use when: array is small, nearly sorted
+
+2. Selection Sort
+   - Time: O(n²)
+   - Best case: O(n²)
+   - Use when: memory is limited
+
+5. Quick Sort
+   - Time: O(n log n) average, O(n²) worst
+   - Best for: general purpose sorting
+   - Most implementations use this
+
+6. Heap Sort
+   - Time: O(n log n)
+   - Use when: memory is limited
+
+
+   big 0 worst case, omega best case, theta average case 

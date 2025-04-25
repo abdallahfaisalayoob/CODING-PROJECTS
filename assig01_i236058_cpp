@@ -1,0 +1,138 @@
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <cstring>
+
+using namespace std;
+
+struct student {
+    string roll;   // used string for roll and gpa instead of int and float becuase otherwise it simply refused to work
+    string gpa;
+    string name;
+    string program;
+    string phone;
+    string cnic;
+};
+
+void displayNames(student info[], int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        cout << setw(10) << info[i].name << "\t" << info[i].cnic << setw(25) << info[i].roll << setw(25) << info[i].gpa << setw(25) << info[i].program << setw(25) << info[i].phone << endl;
+    }
+}
+
+void sortByGPA(student info[], int size)
+{
+    for (int i = 1; i < size; i++)
+    {
+        for (int j = 0; j < size - i; j++)
+        {
+            if (info[j].gpa > info[j + 1].gpa)
+            {
+                student temp = info[j];
+                info[j] = info[j + 1];
+                info[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void sortByName(student info[], int size)
+{
+    for (int i = 1; i < size; i++)
+    {
+        for (int j = 0; j < size - i; j++)
+        {
+            if (info[j].name > info[j + 1].name)
+            {
+                student temp = info[j];
+                info[j] = info[j + 1];
+                info[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    const int size = 500;
+    int i = 0;
+    string user_roll;
+    bool flag = false;
+    int choice;
+    ifstream infile("studentoop.txt"); // File name different to what sir used
+    student info[size];
+
+    while (infile >> info[i].name >> info[i].cnic >> info[i].roll >> info[i].gpa >> info[i].program >> info[i].phone)
+    {
+        cout << setw(10) << info[i].name << "\t" << info[i].cnic << setw(25) << info[i].roll << setw(25) << info[i].gpa << setw(25) << info[i].program << setw(25) << info[i].phone << endl;
+        i++;
+    }
+    cout << endl;
+    cout << "Choose an option:" << endl;
+    cout << "1. Display names" << endl;
+    cout << "2. Find max GPA" << endl;
+    cout << "3. Sort by name" << endl;
+    cout << "4. Sort by GPA" << endl;
+    cout << "5. Search student by roll number" << endl;
+    cin >> choice;
+
+    switch (choice)
+    {
+        case 1:
+            cout << "Displaying names:" << endl;
+            displayNames(info, size);
+            break;
+        case 2: {
+            string temp_gpa = info[1].gpa;
+            int count = 0;
+            for (int i = 1; i < size - 1; i++) {
+                for (int j = 1; j < size - i; j++) {
+                    if (temp_gpa < info[j].gpa) {
+                        temp_gpa = info[j].gpa;
+                        count = j;
+                    }
+                }
+            }
+            cout << "The max gpa is " << temp_gpa << " and the student's information is " << "name " << info[count].name
+                 << "\t" << "Cnic " << info[count].cnic << "\t" << "Roll No " << info[count].roll << "\t" << "Cgpa "
+                 << info[count].gpa << "\t" << "program " << info[count].program << "\t" << "phone number "
+                 << info[count].phone << endl;
+            break;
+        }
+        case 3:
+            cout << "Sorting by name:" << endl;
+            sortByName(info, size);
+            displayNames(info, size);
+            break;
+        case 4:
+            cout << "Sorting by GPA:" << endl;
+            sortByGPA(info, size);
+            displayNames(info, size);
+            break;
+        case 5:
+            cout << "Enter the Roll Number that you would like to search for: ";
+            cin >> user_roll;
+            for (int i = 0; i < size; i++) {
+                if (info[i].roll == user_roll) {
+                    flag = true;
+                    cout << "Student found. Details:" << endl;
+                    cout << "Name: " << info[i].name << endl;
+                    cout << "CNIC: " << info[i].cnic << endl;
+                    cout << "Roll No: " << info[i].roll << endl;
+                    cout << "GPA: " << info[i].gpa << endl;
+                    cout << "Program: " << info[i].program << endl;
+                    cout << "Phone number: " << info[i].phone << endl;
+                    break;
+                }
+            }
+            if (!flag)
+                cout << "Student with Roll Number " << user_roll << " not found." << endl;
+            break;
+        default:
+            cout << "Invalid choice" << endl;
+    }
+
+    infile.close();
+    return 0;
+}
