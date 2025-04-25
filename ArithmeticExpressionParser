@@ -1,0 +1,99 @@
+// Assignment #: A04
+// Roll #: 23I-6058
+// Name: Abdallah Faisal Ayoob
+// Course Name: CS1002 – Programming Fundamentals
+// Semester: Fall 2023
+// Date of submission: 1-11-2023
+#include <iostream>
+using namespace std;
+
+int main() {
+    char input[200] = {0};
+    double res = 0.0;
+    cin >> input;
+
+    // Your code should only go below this:
+
+    double num1 = 0.0;
+    double num2 = 0.0;
+    char operation = 0;
+
+    int i = 0;
+    while (input[i] != '\0') 
+    {
+        if (input[i] >= '0' && input[i] <= '9') 
+        {
+            num1 = num1 * 10 + (input[i] - '0');
+        } else if (input[i] == '.') 
+        {
+            i++;
+            double decimalMultiplier = 0.1;
+            while (input[i] >= '0' && input[i] <= '9') 
+            {
+                num1 = num1 + (input[i] - '0') * decimalMultiplier;
+                decimalMultiplier *= 0.1;
+                i++;
+            }
+            break;  
+        } else {
+            cout << "Invalid character in the input: " << input[i] << endl;
+            return 1;
+        }
+        i++;
+    }
+
+    if (input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/') {
+        operation = input[i];
+    } else {
+        cout << "Invalid operator. Try again" << endl;
+        return 1;
+    }
+
+    i++;
+    while (input[i] != '\0') {
+        if (input[i] >= '0' && input[i] <= '9') {
+            num2 = num2 * 10 + (input[i] - '0');
+        } else if (input[i] == '.') {
+            i++;
+            double decimalMultiplier = 0.1;
+            while (input[i] >= '0' && input[i] <= '9') {
+                num2 = num2 + (input[i] - '0') * decimalMultiplier;
+                decimalMultiplier *= 0.1;
+                i++;
+            }
+            break;
+        } else {
+            cout << "Invalid character : " << input[i] << endl;
+            return 1;
+        }
+        i++;
+    }
+
+    double result = 0.0;
+
+    if (operation == '+') {
+        result = num1 + num2;
+    } else if (operation == '-') {
+        result = num1 - num2;
+    } else if (operation == '*') {
+        result = num1 * num2;
+    } else if (operation == '/') {
+        if (num2 == 0) {
+            cout << "Division by zero is not allowed." << endl;
+            return 1;
+        }
+        result = num1 / num2;
+    } else {
+        cout << "Invalid , try again." << endl;
+        return 1;
+    }
+
+    res = result;
+
+    // Your code should only go above this:
+
+    cout << res;
+}
+
+
+
